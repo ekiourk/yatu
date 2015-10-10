@@ -1,5 +1,5 @@
 .idea
 .virtenv
-.egg-info
+*.egg-info
 .ropeproject
 __pycache__

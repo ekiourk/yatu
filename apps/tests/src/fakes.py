@@ -53,8 +53,8 @@ class FakeUnitOfWorkManager:
 
 
 class FakeShortifier:
-    def __init__(self, results):
-        self.results = results
+    def __init__(self, results=None):
+        self.results = results or []
 
     def __call__(self, url):
         try:

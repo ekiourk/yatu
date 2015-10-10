@@ -6,8 +6,8 @@ class ShortUrlHandler(object):
         self.uow = uow
         self.shortifier = shortifier
 
-    def handle_shorting(self, url):
-        sid = self.shortifier(url)
+    def handle_shorting(self, url, given_sid):
+        sid = given_sid or self.shortifier(url)
         with self.uow.start() as tx:
             surl = tx.short_urls.get(sid)
             if surl:
@@ -18,11 +18,13 @@ class ShortUrlHandler(object):
             tx.short_urls.add(surl)
 
 
-    def __call__(self, url):
+    def __call__(self, url, given_sid=None):
         no_of_tries = 10
         while no_of_tries > 0:
             try:
-                self.handle_shorting(url)
+                self.handle_shorting(url, given_sid)
                 return
             except Exception:
+                if given_sid:
+                    raise
                 no_of_tries -= 1

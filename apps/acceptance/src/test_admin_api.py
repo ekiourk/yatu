@@ -1,19 +1,8 @@
 from expects import expect, equal, have_key, be_a
-import json
-import requests
 from uuid import uuid4
 
+from .context_builders import make_short_it_request
 from yatu.utils import make_uri
-
-
-def make_short_it_request(data):
-    data_json = json.dumps(data)
-    headers = {'Content-type': 'application/json'}
-    result = requests.post(make_uri("short_it/"),
-                           data=data_json,
-                           headers=headers)
-
-    return result.json(), result.status_code
 
 
 class When_a_url_shortening_is_requested:

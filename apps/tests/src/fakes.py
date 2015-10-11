@@ -18,11 +18,6 @@ class FakeShortUrlRepository(FakeRepository):
             if item.sid == sid:
                 return item
 
-    def get_url(self, sid):
-        item = self.get(sid)
-        if item:
-            return item.url
-
 
 class FakeUnitOfWork:
 

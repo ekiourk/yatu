@@ -47,5 +47,7 @@ class ShortUrlRequestHandler:
 
     def __call__(self, sid):
         with self.uow.start() as tx:
-            return tx.short_urls.get_url(sid)
+            short_url = tx.short_urls.get(sid)
+            if short_url:
+                return short_url.url
 

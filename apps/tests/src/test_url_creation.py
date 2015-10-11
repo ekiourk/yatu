@@ -1,7 +1,7 @@
 from expects import expect, be_a, equal, raise_error
 
 from yatu.model import ShortUrl
-from yatu.handlers import ShortUrlHandler
+from yatu.handlers import ShortUrlHandler, SidCollisionException
 from .fakes import FakeUnitOfWorkManager, FakeShortifier
 
 
@@ -14,7 +14,10 @@ class When_a_url_is_shortened_to_an_auto_generated_one:
         self.handler = ShortUrlHandler(self.uow, self.shortifier)
 
     def because_we_are_calling_the_handler_to_short_the_url(self):
-        self.handler(self.url)
+        self.sid = self.handler(self.url)
+
+    def it_should_return_the_sid(self):
+        expect(self.sid).to(equal('SID-123'))
 
     def it_should_insert_a_short_url(self):
         with self.uow.start() as tx:
@@ -96,7 +99,7 @@ class When_a_url_is_shortened_to_a_given_by_the_user_sid_but_sid_already_exists:
         self.uow.sess.short_urls.add(ShortUrl(self.given_sid, "http://a_url.com/"))
 
     def because_we_are_calling_the_handler_to_short_the_url(self):
-        self.callback = lambda x: self.handler(self.url, self.given_sid)
+        self.callback = lambda: self.handler(self.url, self.given_sid)
 
     def it_should_raise_an_error(self):
-        expect(self.callback).to(raise_error(Exception))
+        expect(self.callback).to(raise_error(SidCollisionException))

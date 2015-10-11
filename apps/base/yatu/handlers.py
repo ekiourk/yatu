@@ -1,6 +1,10 @@
 from yatu.model import ShortUrl
 
 
+class SidCollisionException(Exception):
+    pass
+
+
 class ShortUrlHandler(object):
     def __init__(self, uow=None, shortifier=None):
         self.uow = uow
@@ -12,19 +16,19 @@ class ShortUrlHandler(object):
             surl = tx.short_urls.get(sid)
             if surl:
                 # collision happened
-                # TODO: Use a collision specific exception
-                raise Exception("Collision")
+                raise SidCollisionException("Collision")
             surl = ShortUrl(sid, url)
             tx.short_urls.add(surl)
+            tx.commit()
+        return sid
 
 
     def __call__(self, url, given_sid=None):
         no_of_tries = 10
         while no_of_tries > 0:
             try:
-                self.handle_shorting(url, given_sid)
-                return
-            except Exception:
+                return self.handle_shorting(url, given_sid)
+            except SidCollisionException:
                 if given_sid:
                     raise
                 no_of_tries -= 1

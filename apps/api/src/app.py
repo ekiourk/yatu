@@ -1,6 +1,7 @@
 from flask import Flask, Response, json, request
 from yatu import bootstrap
 from yatu.handlers import ShortUrlHandler
+from yatu.utils import make_uri
 
 appl = Flask(__name__)
 
@@ -14,9 +15,9 @@ bootstrap(configuration)
 def short_it():
     json_data = request.json
     handler = ShortUrlHandler()
-    sid = handler(json_data.get('url'))
+    sid = handler(json_data.get('url'), json_data.get('short_url'))
     view = {'success': True,
-            'short_url': sid,
+            'short_url': make_uri(sid),
             'url': json_data.get('url')}
     resp = Response(json.dumps(view), mimetype="application/json")
     return resp

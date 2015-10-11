@@ -1,7 +1,7 @@
 from expects import expect, be_a, equal, raise_error
 
 from yatu.model import ShortUrl
-from yatu.handlers import ShortUrlHandler, SidCollisionException
+from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException
 from .fakes import FakeUnitOfWorkManager, FakeShortifier
 
 
@@ -102,4 +102,4 @@ class When_a_url_is_shortened_to_a_given_by_the_user_sid_but_sid_already_exists:
         self.callback = lambda: self.handler(self.url, self.given_sid)
 
     def it_should_raise_an_error(self):
-        expect(self.callback).to(raise_error(SidCollisionException))
+        expect(self.callback).to(raise_error(SidAlreadyExistsException))

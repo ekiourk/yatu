@@ -1,0 +1,15 @@
+db:
+  image: postgres
+  environment:
+    - POSTGRES_USER=yatu
+  ports:
+    - "5432:5432"
+
+liquibase:
+  build: apps/db-schema/
+  environment:
+    - DB_USER=yatu
+    - DB_SCHEMA_NAME=yatu
+  links:
+    - db
+

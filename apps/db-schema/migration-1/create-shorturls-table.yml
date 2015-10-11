@@ -1,0 +1,33 @@
+databaseChangeLog:
+    - changeSet:
+        id: create_short_urls
+        author: ekiourk
+
+        changes:
+
+            - createTable:
+                tableName: short_urls
+                columns:
+                    - column:
+                        name: id
+                        type: bigserial
+                        constraints:
+                            primaryKey: true
+                            nullable: false
+                            primaryKeyName: pk_short_urls
+                    - column:
+                        name: sid
+                        type: varchar(50)
+                        constraints:
+                            nullable: false
+                            unique: true
+                            uniqueConstraintName: unq_sid
+                    - column:
+                        name: url
+                        type: varchar(255)
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: created_at
+                        type: datetime
+                        defaultValueComputed: now()

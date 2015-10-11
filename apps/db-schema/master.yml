@@ -1,0 +1,4 @@
+databaseChangeLog:
+
+    - include:
+        file: ./migration-1/migration-1.yml

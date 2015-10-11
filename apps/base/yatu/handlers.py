@@ -1,3 +1,5 @@
+import inject
+
 from yatu.model import ShortUrl
 
 
@@ -6,6 +8,7 @@ class SidCollisionException(Exception):
 
 
 class ShortUrlHandler(object):
+    @inject.params(uow='UnitOfWorkManager', shortifier='Shortifier')
     def __init__(self, uow=None, shortifier=None):
         self.uow = uow
         self.shortifier = shortifier

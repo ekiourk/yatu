@@ -1,7 +1,7 @@
 import json
 from urllib.parse import urljoin
 
-from expects import expect, equal
+from expects import expect, equal, have_key, be_a
 import requests
 
 
@@ -25,5 +25,8 @@ class When_a_url_shortening_is_requested:
 
         self.result = result.json()
 
-    def it_should_return_success(self):
-        expect(self.result).to(equal({'success': True, 'short_url': "", 'url': self.url}))
+    def it_should_return_an_sid(self):
+        expect(self.result).to(have_key('short_url'))
+        short_url = self.result['short_url']
+        expect(short_url).to(be_a(str))
+        expect(self.result).to(equal({'success': True, 'short_url': short_url, 'url': self.url}))

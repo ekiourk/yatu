@@ -11,7 +11,7 @@ class SidAlreadyExistsException(Exception):
     pass
 
 
-class ShortUrlHandler(object):
+class ShortUrlHandler:
     @inject.params(uow='UnitOfWorkManager', shortifier='Shortifier')
     def __init__(self, uow=None, shortifier=None):
         self.uow = uow
@@ -29,7 +29,6 @@ class ShortUrlHandler(object):
             tx.commit()
         return sid
 
-
     def __call__(self, url, given_sid=None):
         no_of_tries = 10
         while no_of_tries > 0:
@@ -39,3 +38,14 @@ class ShortUrlHandler(object):
                 if given_sid:
                     raise SidAlreadyExistsException()
                 no_of_tries -= 1
+
+
+class ShortUrlRequestHandler:
+    @inject.params(uow='UnitOfWorkManager')
+    def __init__(self, uow=None):
+        self.uow = uow
+
+    def __call__(self, sid):
+        with self.uow.start() as tx:
+            return tx.short_urls.get_url(sid)
+

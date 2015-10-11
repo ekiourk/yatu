@@ -7,6 +7,10 @@ class SidCollisionException(Exception):
     pass
 
 
+class SidAlreadyExistsException(Exception):
+    pass
+
+
 class ShortUrlHandler(object):
     @inject.params(uow='UnitOfWorkManager', shortifier='Shortifier')
     def __init__(self, uow=None, shortifier=None):
@@ -33,5 +37,5 @@ class ShortUrlHandler(object):
                 return self.handle_shorting(url, given_sid)
             except SidCollisionException:
                 if given_sid:
-                    raise
+                    raise SidAlreadyExistsException()
                 no_of_tries -= 1

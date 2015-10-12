@@ -1,6 +1,7 @@
 import inject
 
 from yatu.model import ShortUrl
+from yatu.tasks import increase_visits_count
 
 
 class SidCollisionException(Exception):
@@ -49,5 +50,6 @@ class ShortUrlRequestHandler:
         with self.uow.start() as tx:
             short_url = tx.short_urls.get(sid)
             if short_url:
+                increase_visits_count(sid, tx)
                 return short_url.url
 

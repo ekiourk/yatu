@@ -81,7 +81,8 @@ class SqlAlchemy:
             Column('id', Integer, primary_key=True),
             Column('sid', String(50)),
             Column('url', String(255)),
-            Column('created_at', DateTime, default=func.now())
+            Column('created_at', DateTime, default=func.now()),
+            Column('visited_counter', Integer, default=0),
         )
 
         # Mappings
@@ -89,7 +90,8 @@ class SqlAlchemy:
             'id': short_urls_table.c.id,
             'sid': short_urls_table.c.sid,
             'url': short_urls_table.c.url,
-            'created_at': short_urls_table.c.created_at
+            'created_at': short_urls_table.c.created_at,
+            'visited_counter': short_urls_table.c.visited_counter
         })
 
     def session(self):

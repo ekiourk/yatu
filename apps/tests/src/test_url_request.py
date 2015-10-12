@@ -11,8 +11,8 @@ class When_a_url_that_exists_is_requested:
         self.url = "http://www.domain.com/article/?q=qwerty&t=10"
         self.sid = 'SID-123'
         self.uow = FakeUnitOfWorkManager()
-        short_url_obj = ShortUrl(self.sid, self.url)
-        self.uow.sess.short_urls.add(short_url_obj)
+        self.short_url_obj = ShortUrl(self.sid, self.url)
+        self.uow.sess.short_urls.add(self.short_url_obj)
 
     def because_we_are_calling_the_handler_to_get_the_original_url(self):
         self.handler = ShortUrlRequestHandler(uow=self.uow)
@@ -20,6 +20,9 @@ class When_a_url_that_exists_is_requested:
 
     def it_should_return_the_url(self):
         expect(self.result).to(equal(self.url))
+
+    def it_should_increase_the_visits(self):
+        expect(self.short_url_obj.visited_counter).to(equal(1))
 
 
 class When_a_url_that_does_not_exist_is_requested:

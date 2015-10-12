@@ -31,3 +31,7 @@ databaseChangeLog:
                         name: created_at
                         type: datetime
                         defaultValueComputed: now()
+                    - column:
+                        name: visited_counter
+                        type: int
+                        defaultValue: 0

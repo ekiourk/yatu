@@ -1,12 +1,15 @@
 from expects import expect, equal
+import inject
 import requests
 
-from yatu.shortifiers import UUIDShortifier
+from yatu import bootstrap
+from yatu import settings
 from yatu.utils import make_uri
 from .context_builders import make_short_it_request
 
-shortifier = UUIDShortifier()
-
+bootstrap(settings)
+shortifier = inject.instance('Shortifier')
+uow = inject.instance('UnitOfWorkManager')
 
 class When_a_short_url_is_requested:
 
@@ -28,6 +31,11 @@ class When_a_short_url_is_requested:
 
     def it_should_redirect_to_the_original_url(self):
         expect(self.result.headers.get('location')).to(equal(self.url))
+
+    def it_should_increase_the_visits(self):
+        with uow.start() as tx:
+            short_url = tx.short_urls.get(self.sid)
+            expect(short_url.visited_counter).to(equal(1))
 
 
 class When_a_short_url_that_does_not_exist_is_requested:

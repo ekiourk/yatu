@@ -1,3 +1,5 @@
+import inject
+
 
 class FakeRepository:
 
@@ -61,3 +63,13 @@ class FakeShortifier:
             return self.results.pop(0)
         except IndexError:
             return
+
+
+def configure_fake_injects(uow=None, shortifier=None):
+    inject.clear_and_configure(
+        lambda binder: binder.bind(
+            'UnitOfWorkManager', uow or FakeUnitOfWorkManager()
+        ).bind(
+            'Shortifier', shortifier or FakeShortifier()
+        )
+    )

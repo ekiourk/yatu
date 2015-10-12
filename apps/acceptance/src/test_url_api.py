@@ -11,6 +11,7 @@ bootstrap(settings)
 shortifier = inject.instance('Shortifier')
 uow = inject.instance('UnitOfWorkManager')
 
+
 class When_a_short_url_is_requested:
 
     def given_a_short_url_that_is_already_created(self):

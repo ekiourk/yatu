@@ -1,4 +1,6 @@
 import inject
+import logging
+import logging.config
 from yatu.orm import SqlAlchemy
 from yatu.shortifiers import UUIDShortifier
 
@@ -16,4 +18,6 @@ def bootstrap(config):
             'Shortifier', UUIDShortifier()
         )
     )
+
+    logging.config.dictConfig(config['logging'])
 

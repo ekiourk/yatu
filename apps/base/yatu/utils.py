@@ -1,6 +1,6 @@
 from urllib.parse import urljoin
-from yatu.settings import API_BASE_URL
+from yatu import settings
 
 
 def make_uri(path):
-    return urljoin(API_BASE_URL, path)
+    return urljoin(settings['api_base_url'], path)

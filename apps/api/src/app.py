@@ -1,6 +1,7 @@
 from flask import Flask, Response, json, request
 
 from yatu import bootstrap
+from yatu import settings
 from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException, ShortUrlRequestHandler
 from yatu.utils import make_uri
 
@@ -8,11 +9,7 @@ from views import moved_permanently_view, not_found_view
 
 appl = Flask(__name__)
 
-configuration = {
-    'postgres_conn_string': "postgres://yatu:@localhost:5432/yatu"
-}
-
-bootstrap(configuration)
+bootstrap(settings)
 
 @appl.route('/short_it/', methods=['POST'])
 def short_it():

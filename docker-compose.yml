@@ -13,3 +13,11 @@ liquibase:
   links:
     - db
 
+rabbitmq:
+  image: rabbitmq:3-management
+  environment:
+    - RABBITMQ_ERLANG_COOKIE=secret_cookie
+    - RABBITMQ_DEFAULT_PASS=123
+  ports:
+    - "8888:15672"
+    - "5672:5672"

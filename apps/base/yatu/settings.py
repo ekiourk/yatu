@@ -40,9 +40,15 @@ LOGGING_CONF = {
     }
 }
 
+CELERY_CONF = {
+    'CELERY_ALWAYS_EAGER': environ.get('CELERY_ALWAYS_EAGER', False)
+}
+
 settings = {
     'postgres_conf': POSTGRES_CONF,
     'postgres_conn_string': "postgres://{user}:{pass}@{host}:{port}/{dbname}".format(**POSTGRES_CONF),
     'api_base_url': environ.get('API_BASE_URL', 'http://localhost:8080'),
-    'logging': LOGGING_CONF
+    'logging': LOGGING_CONF,
+    'amqp_conn_string': 'amqp://guest:123@localhost//',
+    'celery_settings': CELERY_CONF
 }

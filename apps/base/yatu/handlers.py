@@ -47,9 +47,11 @@ class ShortUrlRequestHandler:
         self.uow = uow
 
     def __call__(self, sid):
+        result = None
         with self.uow.start() as tx:
             short_url = tx.short_urls.get(sid)
             if short_url:
-                increase_visits_count(sid, tx)
-                return short_url.url
-
+                result = short_url.url
+        if result:
+            increase_visits_count.delay(sid)
+        return result

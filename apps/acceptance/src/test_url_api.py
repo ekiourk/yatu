@@ -1,6 +1,7 @@
 from expects import expect, equal
 import inject
 import requests
+from retrying import retry
 
 from yatu import bootstrap
 from yatu import settings
@@ -33,6 +34,8 @@ class When_a_short_url_is_requested:
     def it_should_redirect_to_the_original_url(self):
         expect(self.result.headers.get('location')).to(equal(self.url))
 
+    # Needs to retry because the celery task might be delayed
+    @retry(stop_max_attempt_number=7, wait_fixed=100)
     def it_should_increase_the_visits(self):
         with uow.start() as tx:
             short_url = tx.short_urls.get(self.sid)

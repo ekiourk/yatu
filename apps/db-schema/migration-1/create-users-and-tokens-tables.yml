@@ -50,6 +50,14 @@ databaseChangeLog:
                             foreignKeyName: fk_short_urls_user
                             references: users(id)
 
+            - createIndex:
+                tableName: short_urls
+                indexName: short_urls_index_by_user_id
+                columns:
+                    - column:
+                        name: user_id
+                        type: integer
+
             - createTable:
                 tableName: access_tokens
                 columns:

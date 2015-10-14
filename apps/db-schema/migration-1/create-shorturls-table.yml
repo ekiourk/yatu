@@ -35,3 +35,11 @@ databaseChangeLog:
                         name: visited_counter
                         type: int
                         defaultValue: 0
+
+            - createIndex:
+                tableName: short_urls
+                indexName: short_urls_index_by_sid
+                columns:
+                    - column:
+                        name: sid
+                        type: char(50)

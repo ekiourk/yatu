@@ -20,6 +20,14 @@ class FakeShortUrlRepository(FakeRepository):
             if item.sid == sid:
                 return item
 
+    def get_by_user(self, user):
+        result = []
+        for item in self.items:
+            if item.user == user:
+                result.append(item)
+
+        return result
+
 
 class FakeUnitOfWork:
 

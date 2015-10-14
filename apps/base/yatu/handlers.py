@@ -57,3 +57,15 @@ class ShortUrlRequestHandler:
         if result:
             increase_visits_count.delay(sid)
         return result
+
+
+class UrlsForUserHandler:
+    @inject.params(uow='UnitOfWorkManager')
+    def __init__(self, uow=None):
+        self.uow = uow
+
+    def __call__(self, user):
+        #TODO: Support pagination
+        with self.uow.start() as tx:
+            return tx.short_urls.get_by_user(user)
+

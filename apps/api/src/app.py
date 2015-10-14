@@ -4,10 +4,12 @@ import inject
 
 from yatu import bootstrap
 from yatu import settings
-from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException, ShortUrlRequestHandler, UrlsForUserHandler
+from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException,\
+    ShortUrlRequestHandler, UrlsForUserHandler
 from yatu.utils import make_uri
 
-from views import moved_permanently_view, not_found_view, short_urls_list_view
+from views import moved_permanently_view, not_found_view, short_urls_list_view,\
+    error_500_json_view, short_it_success_view, short_it_collision_view
 
 appl = Flask(__name__)
 
@@ -53,30 +55,13 @@ def short_it(user=None):
     handler = ShortUrlHandler(user)
 
     try:
-        sid = handler(url, short_url)
-
-        view = {
-            'success': True,
-            'short_url': make_uri(sid),
-            'url': url
-        }
+        view = short_it_success_view(url, handler(url, short_url))
         return_status = 200
     except SidAlreadyExistsException:
-        view = {
-            'success': False,
-            'short_message': "Short URL is not available.",
-            'error_message': "The url {} is not available. Try another one.".format(make_uri(short_url)),
-            'short_url': short_url,
-            'url': url
-        }
+        view = short_it_collision_view(url, short_url)
         return_status = 409
     except Exception as e:
-        #TODO: Show only on debug mode
-        view = {
-            'success': False,
-            'short_message': "Internal server error",
-            'error_message': str(e)
-        }
+        view = error_500_json_view(str(e))
         return_status = 500
 
     return Response(json.dumps(view), mimetype="application/json", status=return_status)
@@ -90,12 +75,7 @@ def urls_list(user=None):
         view = short_urls_list_view(handler())
         return_status = 200
     except Exception as e:
-        #TODO: Show only on debug mode
-        view = {
-            'success': False,
-            'short_message': "Internal server error",
-            'error_message': str(e)
-        }
+        view = error_500_json_view(str(e))
         return_status = 500
 
     return Response(json.dumps(view), mimetype="application/json", status=return_status)

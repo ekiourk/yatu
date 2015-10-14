@@ -1,9 +1,11 @@
 from expects import expect, be_a, equal, raise_error
 import inject
 
-from yatu.model import ShortUrl
+from yatu.model import ShortUrl, User
 from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException
 from .fakes import FakeShortifier, configure_fake_injects
+
+user = User('Bob')
 
 
 class When_a_url_is_shortened_to_an_auto_generated_one:
@@ -12,7 +14,7 @@ class When_a_url_is_shortened_to_an_auto_generated_one:
         self.url = "http://www.domain.com/big-article-name-with-params/?q=qwerty&t=10"
         self.shortifier = FakeShortifier(['SID-123'])
         configure_fake_injects(shortifier=self.shortifier)
-        self.handler = ShortUrlHandler()
+        self.handler = ShortUrlHandler(user)
 
     def because_we_are_calling_the_handler_to_short_the_url(self):
         self.sid = self.handler(self.url)
@@ -27,6 +29,7 @@ class When_a_url_is_shortened_to_an_auto_generated_one:
 
         expect(s_url).to(be_a(ShortUrl))
         expect(s_url.url).to(equal(self.url))
+        expect(s_url.user).to(equal(user))
 
 
 class When_two_different_urls_are_shortened_and_a_colision_occurs:
@@ -36,7 +39,7 @@ class When_two_different_urls_are_shortened_and_a_colision_occurs:
         self.url2 = "http://www.anotherdomain.com/article/?p=10"
         self.shortifier = FakeShortifier(['SID-123', 'SID-123', 'SID-321'])
         configure_fake_injects(shortifier=self.shortifier)
-        self.handler = ShortUrlHandler()
+        self.handler = ShortUrlHandler(user)
 
     def because_we_are_calling_the_handler_to_short_the_first_url(self):
         self.handler(self.url1)
@@ -58,7 +61,7 @@ class When_the_same_url_is_shortened_twice_and_results_on_the_same_sid:
         self.url = "http://www.domain.com/big-article-name-with-params/?q=qwerty&t=10"
         self.shortifier = FakeShortifier(['SID-123', 'SID-123', 'SID-321'])
         configure_fake_injects(shortifier=self.shortifier)
-        self.handler = ShortUrlHandler()
+        self.handler = ShortUrlHandler(user)
 
     def because_we_are_calling_the_handler_to_short_the_first_url(self):
         self.handler(self.url)
@@ -80,7 +83,7 @@ class When_a_url_is_shortened_to_a_given_sid:
         self.url = "http://www.domain.com/big-article-name-with-params/?q=qwerty&t=10"
         self.given_sid = "5Y14wQ"
         configure_fake_injects()
-        self.handler = ShortUrlHandler()
+        self.handler = ShortUrlHandler(user)
 
     def because_we_are_calling_the_handler_to_short_the_url(self):
         self.handler(self.url, self.given_sid)
@@ -92,6 +95,7 @@ class When_a_url_is_shortened_to_a_given_sid:
 
         expect(s_url).to(be_a(ShortUrl))
         expect(s_url.url).to(equal(self.url))
+        expect(s_url.user).to(equal(user))
 
 
 class When_a_url_is_shortened_to_a_given_by_the_user_sid_but_sid_already_exists:
@@ -100,7 +104,7 @@ class When_a_url_is_shortened_to_a_given_by_the_user_sid_but_sid_already_exists:
         self.url = "http://www.domain.com/big-article-name-with-params/?q=qwerty&t=10"
         self.given_sid = "5Y14wQ"
         configure_fake_injects()
-        self.handler = ShortUrlHandler()
+        self.handler = ShortUrlHandler(user)
         uow = inject.instance('UnitOfWorkManager')
         uow.sess.short_urls.add(ShortUrl(self.given_sid, "http://a_url.com/"))
 

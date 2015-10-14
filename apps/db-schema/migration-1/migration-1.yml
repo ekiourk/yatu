@@ -2,3 +2,5 @@ databaseChangeLog:
 
     - include:
         file: ./migration-1/create-shorturls-table.yml
+    - include:
+        file: ./migration-1/create-users-and-tokens-tables.yml

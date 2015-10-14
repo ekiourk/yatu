@@ -1,0 +1,109 @@
+databaseChangeLog:
+    - changeSet:
+        id: create_users_and_tokens_tables
+        author: ekiourk
+
+        changes:
+
+            - createTable:
+                tableName: users
+                columns:
+                    - column:
+                        name: id
+                        type: bigserial
+                        constraints:
+                            primaryKey: true
+                            nullable: false
+                            primaryKeyName: pk_users
+                    - column:
+                        name: username
+                        type: varchar(50)
+                        constraints:
+                            nullable: false
+                            unique: true
+                            uniqueConstraintName: unq_user_name
+                    - column:
+                        name: email
+                        type: varchar(100)
+                        constraints:
+                            unique: true
+                            nullable: false
+                            uniqueConstraintName: unq_user_email
+                    - column:
+                        name: password
+                        type: varchar(255)
+                        constraints:
+                            nullable: false
+                    - column:
+                        name: created_at
+                        type: datetime
+                        defaultValueComputed: now()
+
+            - addColumn:
+                tableName: short_urls
+                columns:
+                    - column:
+                        name: user_id
+                        type: integer
+                        constraints:
+                            nullable: false
+                            foreignKeyName: fk_short_urls_user
+                            references: users(id)
+
+            - createTable:
+                tableName: access_tokens
+                columns:
+                    - column:
+                        name: token
+                        type: varchar(255)
+                        constraints:
+                            nullable: false
+                            unique: true
+                            uniqueConstraintName: unq_access_token
+                    - column:
+                        name: user_id
+                        type: integer
+                        constraints:
+                            nullable: false
+                            foreignKeyName: fk_access_tokens_user
+                            references: users(id)
+                    - column:
+                        name: created_at
+                        type: datetime
+                        defaultValueComputed: now()
+
+            - createIndex:
+                tableName: access_tokens
+                indexName: access_tokens_index_by_token
+                columns:
+                    - column:
+                        name: token
+                        type: char(255)
+
+            - insert:
+                tableName: users
+                columns:
+                  - column:
+                      name: username
+                      type: varchar(50)
+                      value: yatu
+                  - column:
+                      name: email
+                      type: varchar(100)
+                      value: yatu@yatu.co
+                  - column:
+                      name: password
+                      type: varchar(255)
+                      value: 123
+
+            - insert:
+                tableName: access_tokens
+                columns:
+                  - column:
+                      name: token
+                      type: varchar(255)
+                      value: NyaWDJekdjWI38KejJWlkd93jsdtu
+                  - column:
+                      name: user_id
+                      type: integer
+                      value: 1

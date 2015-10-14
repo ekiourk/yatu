@@ -14,9 +14,10 @@ class SidAlreadyExistsException(Exception):
 
 class ShortUrlHandler:
     @inject.params(uow='UnitOfWorkManager', shortifier='Shortifier')
-    def __init__(self, uow=None, shortifier=None):
+    def __init__(self, user, uow=None, shortifier=None):
         self.uow = uow
         self.shortifier = shortifier
+        self.user = user
 
     def handle_shorting(self, url, given_sid):
         sid = given_sid or self.shortifier(url)
@@ -26,6 +27,7 @@ class ShortUrlHandler:
                 # collision happened
                 raise SidCollisionException("Collision")
             surl = ShortUrl(sid, url)
+            surl.user = self.user
             tx.short_urls.add(surl)
             tx.commit()
         return sid

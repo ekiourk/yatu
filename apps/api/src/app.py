@@ -1,8 +1,10 @@
-from flask import Flask, Response, json, request
+from flask import Flask, Response, json, request, abort
+import inject
 
 from yatu import bootstrap
 from yatu import settings
 from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException, ShortUrlRequestHandler
+from yatu.model import User
 from yatu.utils import make_uri
 
 from views import moved_permanently_view, not_found_view
@@ -11,12 +13,44 @@ appl = Flask(__name__)
 
 bootstrap(settings)
 
+
+def authorized(fn):
+    """Decorator that checks that requests contain an Authorization header.
+    user will be None if the authentication failed,
+    and have a user object otherwise.
+
+    Usage:
+    @app.route("/")
+    @authorized
+    def secured_root(user=None):
+        pass
+    """
+
+    def _wrap(*args, **kwargs):
+        if 'Authorization' not in request.headers:
+            abort(401)
+            return None
+
+        uow = inject.instance('UnitOfWorkManager')
+        with uow.start() as tx:
+            user = tx.users.get_by_token(request.headers['Authorization'])
+
+        if user is None:
+            # Unauthorized
+            abort(401)
+            return None
+
+        return fn(user=user, *args, **kwargs)
+    return _wrap
+
+
 @appl.route('/short_it/', methods=['POST'])
-def short_it():
+@authorized
+def short_it(user=None):
     json_data = request.json
     url = json_data.get('url')
     short_url = json_data.get('short_url')
-    handler = ShortUrlHandler()
+    handler = ShortUrlHandler(user)
 
     try:
         sid = handler(url, short_url)

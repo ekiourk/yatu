@@ -3,8 +3,7 @@ import inject
 import requests
 from retrying import retry
 
-from yatu import bootstrap
-from yatu import settings
+from yatu import bootstrap, settings
 from yatu.utils import make_uri
 from .context_builders import make_short_it_request
 

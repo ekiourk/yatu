@@ -2,7 +2,6 @@ from expects import expect, equal, have_key, be_a
 import inject
 
 from .context_builders import make_short_it_request
-from yatu.shortifiers import UUIDShortifier
 from yatu.utils import make_uri
 
 shortifier = inject.instance('Shortifier')

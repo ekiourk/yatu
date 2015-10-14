@@ -25,8 +25,8 @@ class When_the_list_of_urls_for_a_user_are_requested:
         uow.sess.short_urls.add(short_url3)
 
     def because_the_urls_by_user_are_requested(self):
-        self.handler = UrlsForUserHandler()
-        self.result = self.handler(self.user)
+        self.handler = UrlsForUserHandler(self.user)
+        self.result = self.handler()
 
     def it_should_return_the_urls_only_for_that_user(self):
         expect(self.result).to(have_len(2))

@@ -60,12 +60,14 @@ class ShortUrlRequestHandler:
 
 
 class UrlsForUserHandler:
+    """Handler to return a list of ShortUrls for a given user"""
     @inject.params(uow='UnitOfWorkManager')
-    def __init__(self, uow=None):
+    def __init__(self, user, uow=None):
         self.uow = uow
+        self.user = user
 
-    def __call__(self, user):
+    def __call__(self):
         #TODO: Support pagination
         with self.uow.start() as tx:
-            return tx.short_urls.get_by_user(user)
+            return tx.short_urls.get_by_user(self.user)
 

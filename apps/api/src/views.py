@@ -1,3 +1,5 @@
+from yatu.utils import make_uri
+
 
 def moved_permanently_view(url):
     return """
@@ -25,3 +27,15 @@ The document has not found.
 </BODY>
 </HTML>
 """
+
+
+def short_urls_list_view(short_urls):
+    result = []
+    for item in short_urls:
+        result.append({
+            'url': item.url,
+            'short_url': make_uri(item.sid),
+            'created': item.created_at,
+            'clicks': item.visited_counter
+        })
+    return result

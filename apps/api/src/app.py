@@ -1,13 +1,13 @@
+from functools import wraps
 from flask import Flask, Response, json, request, abort
 import inject
 
 from yatu import bootstrap
 from yatu import settings
-from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException, ShortUrlRequestHandler
-from yatu.model import User
+from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException, ShortUrlRequestHandler, UrlsForUserHandler
 from yatu.utils import make_uri
 
-from views import moved_permanently_view, not_found_view
+from views import moved_permanently_view, not_found_view, short_urls_list_view
 
 appl = Flask(__name__)
 
@@ -25,7 +25,7 @@ def authorized(fn):
     def secured_root(user=None):
         pass
     """
-
+    @wraps(fn)
     def _wrap(*args, **kwargs):
         if 'Authorization' not in request.headers:
             abort(401)
@@ -70,6 +70,25 @@ def short_it(user=None):
             'url': url
         }
         return_status = 409
+    except Exception as e:
+        #TODO: Show only on debug mode
+        view = {
+            'success': False,
+            'short_message': "Internal server error",
+            'error_message': str(e)
+        }
+        return_status = 500
+
+    return Response(json.dumps(view), mimetype="application/json", status=return_status)
+
+
+@appl.route('/short_urls/', methods=['GET'])
+@authorized
+def urls_list(user=None):
+    handler = UrlsForUserHandler(user)
+    try:
+        view = short_urls_list_view(handler())
+        return_status = 200
     except Exception as e:
         #TODO: Show only on debug mode
         view = {

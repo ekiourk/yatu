@@ -27,8 +27,24 @@ class ShortUrlRepository(Repository):
         except sqlalchemy.orm.exc.NoResultFound:
             return
 
+    def get_by_user(self, user):
+        try:
+            return self.session.query(ShortUrl) \
+                .filter_by(user_id=user.id)\
+                .order_by(ShortUrl.created_at.desc())\
+                .all()
+        except sqlalchemy.orm.exc.NoResultFound:
+            return
+
 
 class UserRepository(Repository):
+
+    def add(self, user):
+        """Add the user object and the token object (if exists) in the session"""
+        self.session.add(user)
+        if hasattr(user, 'token') and user.token:
+            user.token.user = user
+            self.session.add(user.token)
 
     def get_by_token(self, token):
         try:

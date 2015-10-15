@@ -22,10 +22,19 @@ rabbitmq:
     - "8888:15672"
     - "5672:5672"
 
+celeryworker:
+  build: apps/celery_worker/
+  environment:
+    - C_FORCE_ROOT=1
+  links:
+    - db
+    - rabbitmq
+
 api:
   build: apps/api/
   links:
     - db
     - rabbitmq
+    - celeryworker
   ports:
     - "8080:80"

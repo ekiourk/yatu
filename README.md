@@ -1,5 +1,7 @@
 # YATU (Yet Another Tiny URL)
 
+[![Build Status](https://travis-ci.org/ekiourk/yatu.svg?branch=master)](https://travis-ci.org/ekiourk/yatu)
+
 ### How do I run YATU locally?
 
 You need to have python3, [docker](https://docs.docker.com/installation/) and [docker-compose](https://docs.docker.com/compose/install/) installed on your system

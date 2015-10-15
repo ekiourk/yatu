@@ -21,3 +21,11 @@ rabbitmq:
   ports:
     - "8888:15672"
     - "5672:5672"
+
+api:
+  build: apps/api/
+  links:
+    - db
+    - rabbitmq
+  ports:
+    - "8080:80"

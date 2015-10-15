@@ -1,7 +1,6 @@
 from functools import wraps
 from flask import Flask, Response, json, request, abort
 import inject
-from apps.api.src.views import not_found_404_view, forbidden_found_403_view
 
 from yatu import bootstrap
 from yatu import settings
@@ -10,7 +9,8 @@ from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException,\
     ShortUrlRequestHandler, UrlsForUserHandler, UrlInfoRequestHandler
 
 from views import moved_permanently_view, not_found_view, short_urls_list_view,\
-    error_500_view, short_it_success_view, short_it_collision_view, short_url_single_view
+    error_500_view, short_it_success_view, short_it_collision_view, short_url_single_view,\
+    not_found_404_view, forbidden_found_403_view
 
 appl = Flask(__name__)
 

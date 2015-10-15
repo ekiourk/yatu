@@ -4,8 +4,8 @@ POSTGRES_CONF = {
     'user': environ.get('POSTGRES_USER', 'yatu'),
     'pass': environ.get('POSTGRES_PASS', ''),
     'dbname': environ.get('POSTGRES_DBNAME', 'yatu'),
-    'host': environ.get('POSTGRES_HOST', 'localhost'),
-    'port': environ.get('POSTGRES_PORT', '5432')
+    'host': environ.get('DB_PORT_5432_TCP_ADDR', 'localhost'),
+    'port': environ.get('DB_PORT_5432_TCP_PORT', '5432')
 }
 
 LOGGING_CONF = {
@@ -49,6 +49,6 @@ settings = {
     'postgres_conn_string': "postgres://{user}:{pass}@{host}:{port}/{dbname}".format(**POSTGRES_CONF),
     'api_base_url': environ.get('API_BASE_URL', 'http://localhost:8080'),
     'logging': LOGGING_CONF,
-    'amqp_conn_string': 'amqp://guest:123@localhost//',
+    'amqp_conn_string': 'amqp://guest:123@{host}//'.format(host=environ.get('RABBITMQ_PORT_5672_TCP_ADDR', 'localhost')),
     'celery_settings': CELERY_CONF
 }

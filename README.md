@@ -20,10 +20,19 @@ You need to have python3, [docker](https://docs.docker.com/installation/) and [d
 3. Call `run-contexts apps/tests/src` for the unitests
 4. Call `run-contexts apps/acceptance/src` for the integration tests
 
+### Directory structure
+
+The main cadebase leaves in the yatu python package and can be found at apps/base/yatu/
+The API is located in the apps/api/ and it is a very simple codebase with only the api endpoints and the views.
+The unit and acceptance tests can be found in apps/tests/src and apps/acceptance/src/ 
+Last but not least is the db schema migrations (apps/db-schema). For that we are using liquibase which is dockerised. By building and running the docker container, it connects to the database and makes sure that the schema is up to date
+
 ### Why Rabbit and celery?
 
 The target is to have a fast response time on the requests of short urls. At the same time we want to keep statistics for each request to the api. In order to not block the api till the statistics are processed and stored, we need celery to publish a task to deal with statistics in an asynchronous manner.
 
 ### TODO:
 
-Add redis to store only the short_url - long_url pair and use that to resolve the short urls for even faster response times 
+- Add redis to store only the short_url - long_url pair and use that to resolve the short urls for even faster response times
+- Add api for user registration and access token management
+- Hash the user passwords in the database

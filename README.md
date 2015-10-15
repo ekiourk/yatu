@@ -17,3 +17,11 @@ You need to have python3, [docker](https://docs.docker.com/installation/) and [d
 2. In a new terminal activate virtualenv
 3. Call `run-contexts apps/tests/src` for the unitests
 4. Call `run-contexts apps/acceptance/src` for the integration tests
+
+### Why Rabbit and celery?
+
+The target is to have a fast response time on the requests of short urls. At the same time we want to keep statistics for each request to the api. In order to not block the api till the statistics are processed and stored, we need celery to publish a task to deal with statistics in an asynchronous manner.
+
+### TODO:
+
+Add redis to store only the short_url - long_url pair and use that to resolve the short urls for even faster response times 

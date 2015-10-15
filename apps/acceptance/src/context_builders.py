@@ -20,11 +20,11 @@ def make_short_it_request(data):
     return result.json(), result.status_code
 
 
-def make_user_urls_request(token):
+def make_user_urls_request(token, sid=''):
     headers = {'Content-type': 'application/json',
                'Authorization': token}
     result = requests.get(
-        make_uri("short_urls/"),
+        make_uri("short_urls/{}".format(sid)),
         headers=headers
     )
 

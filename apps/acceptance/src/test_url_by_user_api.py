@@ -19,7 +19,8 @@ class When_the_list_of_urls_for_a_user_are_requested:
             # Urls for Alice
             alice = create_user_with_token(tx)
             self.alice_token = alice.token.token
-            short_url1 = ShortUrl(shortifier('url1'), "http://url.1", user=alice)
+            self.sid1 = shortifier('url1')
+            short_url1 = ShortUrl(self.sid1, "http://url.1", user=alice)
             short_url1.created_at = datetime.now() - timedelta(days=1)
             short_url2 = ShortUrl(shortifier('url2'), "http://url.2", user=alice)
             tx.short_urls.add(short_url1)
@@ -34,6 +35,7 @@ class When_the_list_of_urls_for_a_user_are_requested:
             tx.commit()
 
     def because_the_urls_by_user_are_requested(self):
+        # list requests
         self.result_alice, self.alice_status = make_user_urls_request(self.alice_token)
         self.result_bob, self.bob_status = make_user_urls_request(self.bob_token)
 
@@ -47,4 +49,17 @@ class When_the_list_of_urls_for_a_user_are_requested:
         expect(self.bob_status).to(equal(200))
         expect(self.result_bob).to(have_len(1))
         expect(self.result_bob[0]['url']).to(equal("http://url.3"))
+
+    def it_should_return_one_result_for_specific_sid(self):
+        result, status = make_user_urls_request(self.alice_token, self.sid1)
+        expect(status).to(equal(200))
+        expect(result['url']).to(equal("http://url.1"))
+
+    def it_should_return_404_for_sid_that_does_not_exist(self):
+        _, status = make_user_urls_request(self.alice_token, 'sid-do-not-exist')
+        expect(status).to(equal(404))
+
+    def it_should_return_403_for_sid_that_does_not_belong_to_user(self):
+        _, status = make_user_urls_request(self.bob_token, self.sid1)
+        expect(status).to(equal(403))
 

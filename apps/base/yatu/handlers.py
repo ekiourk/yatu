@@ -1,15 +1,8 @@
 import inject
 
+from yatu.exceptions import ShortUrlNotFound, ShortUrlInfoForbidden, SidCollisionException, SidAlreadyExistsException
 from yatu.model import ShortUrl
 from yatu.tasks import increase_visits_count
-
-
-class SidCollisionException(Exception):
-    pass
-
-
-class SidAlreadyExistsException(Exception):
-    pass
 
 
 class ShortUrlHandler:
@@ -70,4 +63,21 @@ class UrlsForUserHandler:
         #TODO: Support pagination
         with self.uow.start() as tx:
             return tx.short_urls.get_by_user(self.user)
+
+
+class UrlInfoRequestHandler:
+    """Handler to return a list of ShortUrls for a given user"""
+    @inject.params(uow='UnitOfWorkManager')
+    def __init__(self, user, uow=None):
+        self.uow = uow
+        self.user = user
+
+    def __call__(self, sid):
+        with self.uow.start() as tx:
+            short_url = tx.short_urls.get(sid)
+            if short_url:
+                if short_url.user == self.user:
+                    return short_url
+                raise ShortUrlInfoForbidden()
+            raise ShortUrlNotFound()
 

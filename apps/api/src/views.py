@@ -29,11 +29,27 @@ The document has not found.
 """
 
 
-def error_500_json_view(message):
+def error_500_view(message):
     #TODO: Show message only on debug mode
     return {
         'success': False,
         'short_message': "Internal server error",
+        'error_message': message
+    }
+
+
+def not_found_404_view(message):
+    return {
+        'success': False,
+        'short_message': "Not Found",
+        'error_message': message
+    }
+
+
+def forbidden_found_403_view(message):
+    return {
+        'success': False,
+        'short_message': "Forbidden",
         'error_message': message
     }
 
@@ -56,13 +72,17 @@ def short_it_collision_view(url, sid):
     }
 
 
+def short_url_single_view(short_url):
+    return {
+        'url': short_url.url,
+        'short_url': make_uri(short_url.sid),
+        'created': short_url.created_at,
+        'clicks': short_url.visited_counter
+    }
+
+
 def short_urls_list_view(short_urls):
     result = []
     for item in short_urls:
-        result.append({
-            'url': item.url,
-            'short_url': make_uri(item.sid),
-            'created': item.created_at,
-            'clicks': item.visited_counter
-        })
+        result.append(short_url_single_view(item))
     return result

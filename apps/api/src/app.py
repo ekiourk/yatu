@@ -1,15 +1,16 @@
 from functools import wraps
 from flask import Flask, Response, json, request, abort
 import inject
+from apps.api.src.views import not_found_404_view, forbidden_found_403_view
 
 from yatu import bootstrap
 from yatu import settings
+from yatu.exceptions import ShortUrlNotFound, ShortUrlInfoForbidden
 from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException,\
-    ShortUrlRequestHandler, UrlsForUserHandler
-from yatu.utils import make_uri
+    ShortUrlRequestHandler, UrlsForUserHandler, UrlInfoRequestHandler
 
 from views import moved_permanently_view, not_found_view, short_urls_list_view,\
-    error_500_json_view, short_it_success_view, short_it_collision_view
+    error_500_view, short_it_success_view, short_it_collision_view, short_url_single_view
 
 appl = Flask(__name__)
 
@@ -31,7 +32,7 @@ def authorized(fn):
     def _wrap(*args, **kwargs):
         if 'Authorization' not in request.headers:
             abort(401)
-            return None
+            return
 
         uow = inject.instance('UnitOfWorkManager')
         with uow.start() as tx:
@@ -40,7 +41,7 @@ def authorized(fn):
         if user is None:
             # Unauthorized
             abort(401)
-            return None
+            return
 
         return fn(user=user, *args, **kwargs)
     return _wrap
@@ -61,7 +62,7 @@ def short_it(user=None):
         view = short_it_collision_view(url, short_url)
         return_status = 409
     except Exception as e:
-        view = error_500_json_view(str(e))
+        view = error_500_view(str(e))
         return_status = 500
 
     return Response(json.dumps(view), mimetype="application/json", status=return_status)
@@ -69,13 +70,33 @@ def short_it(user=None):
 
 @appl.route('/short_urls/', methods=['GET'])
 @authorized
-def urls_list(user=None):
-    handler = UrlsForUserHandler(user)
+def short_urls_list(user=None):
     try:
+        handler = UrlsForUserHandler(user)
         view = short_urls_list_view(handler())
         return_status = 200
     except Exception as e:
-        view = error_500_json_view(str(e))
+        view = error_500_view(str(e))
+        return_status = 500
+
+    return Response(json.dumps(view), mimetype="application/json", status=return_status)
+
+
+@appl.route('/short_urls/<sid>', methods=['GET'])
+@authorized
+def short_url(user=None, sid=None):
+    try:
+        handler = UrlInfoRequestHandler(user)
+        view = short_url_single_view(handler(sid))
+        return_status = 200
+    except ShortUrlNotFound:
+        view = not_found_404_view('Short url {} not found'.format(sid))
+        return_status = 404
+    except ShortUrlInfoForbidden:
+        view = forbidden_found_403_view('Not allowed to access short url {}'.format(sid))
+        return_status = 403
+    except Exception as e:
+        view = error_500_view(str(e))
         return_status = 500
 
     return Response(json.dumps(view), mimetype="application/json", status=return_status)

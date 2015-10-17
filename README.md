@@ -16,7 +16,9 @@ You need to have python3, [docker](https://docs.docker.com/installation/) and [d
 
 You need to have [docker](https://docs.docker.com/installation/) and [docker-compose](https://docs.docker.com/compose/install/) installed on your system
 
-1. Call the `run_yatu_inside_docker.sh` script and wait till it finishes building everything, running migrations and bringing up the api
+1. Call the `run_yatu_inside_docker.sh` script and wait till it finishes building everything, running migrations and bringing up the api on (http://localhost:8080)[http://localhost:8080].
+
+After the above step finishes, you are ready to use the system. Use the helper scripts on the curl_scripts directory to post urls to be shorted and to retrieve information by using the token of the yatu user that already exists in the database. 
 
 ### How do I run the tests?
 

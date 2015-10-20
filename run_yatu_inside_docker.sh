@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker build -t yatu_base apps/base
+docker build -t yatu_base base
 
 docker-compose build
 

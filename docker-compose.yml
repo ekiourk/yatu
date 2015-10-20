@@ -6,7 +6,7 @@ db:
     - "5432:5432"
 
 liquibase:
-  build: apps/db-schema/
+  build: db-schema/
   environment:
     - DB_USER=yatu
     - DB_SCHEMA_NAME=yatu
@@ -23,7 +23,7 @@ rabbitmq:
     - "5672:5672"
 
 celeryworker:
-  build: apps/celery_worker/
+  build: celery_worker/
   environment:
     - C_FORCE_ROOT=1
   links:
@@ -31,7 +31,7 @@ celeryworker:
     - rabbitmq
 
 api:
-  build: apps/api/
+  build: api/
   links:
     - db
     - rabbitmq

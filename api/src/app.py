@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Flask, Response, json, request, abort
+from flask import Flask, Response, request, abort, jsonify
 import inject
 
 from yatu import bootstrap
@@ -65,7 +65,9 @@ def short_it(user=None):
         view = error_500_view(str(e))
         return_status = 500
 
-    return Response(json.dumps(view), mimetype="application/json", status=return_status)
+    response = jsonify(view)
+    response.status_code = return_status
+    return response
 
 
 @appl.route('/short_urls/', methods=['GET'])
@@ -79,7 +81,9 @@ def short_urls_list(user=None):
         view = error_500_view(str(e))
         return_status = 500
 
-    return Response(json.dumps(view), mimetype="application/json", status=return_status)
+    response = jsonify(view)
+    response.status_code = return_status
+    return response
 
 
 @appl.route('/short_urls/<sid>', methods=['GET'])
@@ -99,7 +103,9 @@ def short_url(user=None, sid=None):
         view = error_500_view(str(e))
         return_status = 500
 
-    return Response(json.dumps(view), mimetype="application/json", status=return_status)
+    response = jsonify(view)
+    response.status_code = return_status
+    return response
 
 
 @appl.route('/<sid>', methods=['GET'])

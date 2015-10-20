@@ -82,7 +82,7 @@ def short_url_single_view(short_url):
 
 
 def short_urls_list_view(short_urls):
-    result = []
+    items = []
     for item in short_urls:
-        result.append(short_url_single_view(item))
-    return result
+        items.append(short_url_single_view(item))
+    return {'items': items, 'count': len(items)}

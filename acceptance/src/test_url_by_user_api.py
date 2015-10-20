@@ -41,14 +41,16 @@ class When_the_list_of_urls_for_a_user_are_requested:
 
     def it_should_return_the_urls_for_alice_with_status_200(self):
         expect(self.alice_status).to(equal(200))
-        expect(self.result_alice).to(have_len(2))
-        expect(self.result_alice[0]['url']).to(equal("http://url.2"))
-        expect(self.result_alice[1]['url']).to(equal("http://url.1"))
+        expect(self.result_alice['count']).to(equal(2))
+        expect(self.result_alice['items']).to(have_len(2))
+        expect(self.result_alice['items'][0]['url']).to(equal("http://url.2"))
+        expect(self.result_alice['items'][1]['url']).to(equal("http://url.1"))
 
     def it_should_return_the_urls_for_bob_with_status_200(self):
         expect(self.bob_status).to(equal(200))
-        expect(self.result_bob).to(have_len(1))
-        expect(self.result_bob[0]['url']).to(equal("http://url.3"))
+        expect(self.result_bob['count']).to(equal(1))
+        expect(self.result_bob['items']).to(have_len(1))
+        expect(self.result_bob['items'][0]['url']).to(equal("http://url.3"))
 
     def it_should_return_one_result_for_specific_sid(self):
         result, status = make_user_urls_request(self.alice_token, self.sid1)

@@ -27,8 +27,8 @@ NOTE: If you want to run YATU inside containers, you still need to create and ac
 
 1. First run YATU either locally or inside docker by following the steps above
 2. In a new terminal activate virtualenv
-3. Call `run-contexts tests/src` for the unitests
-4. Call `run-contexts acceptance/src` for the integration tests
+3. Call `run-contexts -v tests/src` for the unitests
+4. Call `run-contexts -v acceptance/src` for the integration tests
 
 ### Directory structure
 

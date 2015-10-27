@@ -1,6 +1,7 @@
 import json
 from uuid import uuid4
 import requests
+
 from yatu.model import User, AccessToken
 from yatu.utils import make_uri
 

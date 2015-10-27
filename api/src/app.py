@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Flask, Response, request, abort, jsonify
+from flask import Flask, Response, request, abort, jsonify, render_template
 import inject
 
 from yatu import bootstrap
@@ -8,8 +8,8 @@ from yatu.exceptions import ShortUrlNotFound, ShortUrlInfoForbidden
 from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException,\
     ShortUrlRequestHandler, UrlsForUserHandler, UrlInfoRequestHandler
 
-from views import moved_permanently_view, not_found_view, short_urls_list_view,\
-    error_500_view, short_it_success_view, short_it_collision_view, short_url_single_view,\
+from views import short_urls_list_view, error_500_view,\
+    short_it_success_view, short_it_collision_view, short_url_single_view,\
     not_found_404_view, forbidden_found_403_view
 
 appl = Flask(__name__)
@@ -118,10 +118,18 @@ def go(sid):
         return Response(str(e), mimetype="text/html", status=500)
 
     if url:
-        resp = Response(moved_permanently_view(url), mimetype="text/html", status=301)
+        resp = Response(
+            render_template('url_moved_permanently.html', url=url),
+            mimetype="text/html",
+            status=301
+        )
         resp.headers.add('Location', url)
     else:
-        resp = Response(not_found_view(), mimetype="text/html", status=404)
+        resp = Response(
+            render_template('url_not_found.html'),
+            mimetype="text/html",
+            status=404
+        )
 
     return resp
 

@@ -1,4 +1,4 @@
-from expects import expect, equal
+from expects import expect, equal, contain
 import inject
 import requests
 from retrying import retry
@@ -33,6 +33,9 @@ class When_a_short_url_is_requested:
     def it_should_redirect_to_the_original_url(self):
         expect(self.result.headers.get('location')).to(equal(self.url))
 
+    def it_should_have_a_body_with_a_redirect_message_with_the_url(self):
+        expect(self.result.text).to(contain("Moved Permanently"))
+
     # Needs to retry because the celery task might be delayed
     @retry(stop_max_attempt_number=7, wait_fixed=100)
     def it_should_increase_the_visits(self):
@@ -51,4 +54,7 @@ class When_a_short_url_that_does_not_exist_is_requested:
 
     def it_should_return_status_code_404(self):
         expect(self.result.status_code).to(equal(404))
+
+    def it_should_have_a_body_with_not_found_message(self):
+        expect(self.result.text).to(contain("The document has not found."))
 

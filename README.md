@@ -27,14 +27,14 @@ NOTE: If you want to run YATU inside containers, you still need to create and ac
 
 1. First run YATU either locally or inside docker by following the steps above
 2. In a new terminal activate virtualenv
-3. Call `run-contexts -v tests/src` for the unitests
-4. Call `run-contexts -v acceptance/src` for the integration tests
+3. Call `run-contexts -v tests/unitests` for the unitests
+4. Call `run-contexts -v tests/integration` for the integration tests
 
 ### Directory structure
 
 The main cadebase leaves in the yatu python package and can be found at base/yatu/
 The API is located in the api/ and it is a very simple codebase with only the api endpoints and the views.
-The unit and acceptance tests can be found in tests/src and acceptance/src/ 
+The unit and integration tests can be found in tests/ directory 
 Last but not least is the db schema migrations (db-schema). For that we are using liquibase which is dockerised. By building and running the docker container, it connects to the database and makes sure that the schema is up to date
 
 ### Why Rabbit and celery?

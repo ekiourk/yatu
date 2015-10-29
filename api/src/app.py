@@ -1,50 +1,19 @@
-from functools import wraps
-from flask import Flask, Response, request, abort, jsonify, render_template
-import inject
+from flask import Flask, Response, request, jsonify, render_template
 
+from decorators import authorized
 from yatu import bootstrap
 from yatu import settings
 from yatu.exceptions import ShortUrlNotFound, ShortUrlInfoForbidden
 from yatu.handlers import ShortUrlHandler, SidAlreadyExistsException,\
     ShortUrlRequestHandler, UrlsForUserHandler, UrlInfoRequestHandler
-
 from views import short_urls_list_view, error_500_view,\
     short_it_success_view, short_it_collision_view, short_url_single_view,\
     not_found_404_view, forbidden_found_403_view
 
+
 appl = Flask(__name__)
 
 bootstrap(settings)
-
-
-def authorized(fn):
-    """Decorator that checks that requests contain an Authorization header.
-    user will be None if the authentication failed,
-    and have a user object otherwise.
-
-    Usage:
-    @app.route("/")
-    @authorized
-    def secured_root(user=None):
-        pass
-    """
-    @wraps(fn)
-    def _wrap(*args, **kwargs):
-        if 'Authorization' not in request.headers:
-            abort(401)
-            return
-
-        uow = inject.instance('UnitOfWorkManager')
-        with uow.start() as tx:
-            user = tx.users.get_by_token(request.headers['Authorization'])
-
-        if user is None:
-            # Unauthorized
-            abort(401)
-            return
-
-        return fn(user=user, *args, **kwargs)
-    return _wrap
 
 
 @appl.route('/short_it/', methods=['POST'])
